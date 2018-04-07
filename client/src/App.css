@@ -1,0 +1,15 @@
+p {
+	border-bottom: 2px solid red;
+	padding-bottom: 5px;
+	margin-bottom: 25px;
+	margin-left: 10px;
+}
+
+#left, #right {
+	float: left;
+	border: blue 4px dashed;
+}
+
+#left {
+	margin-right: 100px;
+}
