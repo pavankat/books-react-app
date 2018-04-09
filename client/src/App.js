@@ -1,5 +1,8 @@
+//App.js
 import React, { Component } from 'react';
 import './App.css'
+import {_loadBooks, _deleteBook, _createBook, _loadBook, _updateBook} from './services/BookService';
+
 
 class App extends Component {
   constructor() {
@@ -19,10 +22,10 @@ class App extends Component {
     // loadBooks()
     //   .then(resultingJSON => this.setState({books : resultingJSON}))
 
-    this.loadBooks()
+    _loadBooks()
     .then(books => this.setState({books}))
 
-    this.loadBook('5ac51dd11598966454b2543b')
+    _loadBook('5ac51dd11598966454b2543b')
     .then(res => console.log('line 24', res));
 
   }
@@ -37,15 +40,7 @@ class App extends Component {
 
     //2:25
 
-    fetch(`http://localhost:3001/delete/${idDelete}`, {
-        method: "DELETE",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      }).then(res => res.json())
-      .then((oldBookId) => {
-      
+    _deleteBook(idDelete).then((oldBookId) => {
       let books = this.state.books.filter((book, i) => book._id !== oldBookId)
 
       this.setState({
@@ -56,11 +51,6 @@ class App extends Component {
 
   }
 
-  loadBooks = () => {
-    return fetch("http://localhost:3001/books")
-      .then(res => res.json())
-  }
-
   /*
     ACTIVITY write a method called loadBook that takes in an id and hits http://localhost:3001/books/:id and console logs the result
     
@@ -68,10 +58,7 @@ class App extends Component {
 
     we'll go over this at 11:07 am
   */
-  loadBook = (id) => {
-    return fetch(`http://localhost:3001/book/${id}`)
-      .then(res => res.json())
-  }
+
 
   loadEditForm = (id) => {
     this.setState({update : true}, () => {
@@ -81,7 +68,7 @@ class App extends Component {
 
       let input = form.children[0];
 
-      this.loadBook(id)
+      _loadBook(id)
       .then(res => input.value = res[0].name);
 
       //activity: 2:05
@@ -100,14 +87,7 @@ class App extends Component {
 
     const id = this.state.editBookId;
 
-    fetch(`http://localhost:3001/book/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({name})
-      }).then(res => res.json())
+    _updateBook(id, name)
       .then((res) => {
        let books = this.state.books.map((b) => {
         if (b._id != id) return b;
@@ -126,14 +106,7 @@ class App extends Component {
     // {name: 'to kill a mockingbird'} 
 
     //instead of alerting the book name, make a fetch call to the post route in express and submit the book
-    fetch("http://localhost:3001/booksinsert", {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({name})
-      }).then(res => res.json())
+    _createBook(name)
       .then((res) => {
         this.setState({books : [...this.state.books, res]})
 
